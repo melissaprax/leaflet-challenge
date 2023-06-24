@@ -13,14 +13,59 @@ function createFeatures(earthquakeData) {
   // Give each feature a popup that describes the place and time of the earthquake.
   function onEachFeature(feature, layer) {
     layer.bindPopup(`<h3>${feature.properties.place}</h3><hr><p>${new Date(feature.properties.time)}</p>`);
+    console.log(feature.properties.mag);
+  }
+
+  function pointToLayer(feature, coordinate) {
+
+    return L.circleMarker(coordinate);
 
   }
 
+  function getStyle(feature) {
+
+    return  {
+        fillColor: colorStyle(feature.geometry.coordinates[2]),
+        color: colorStyle(feature.geometry.coordinates[2]),
+        radius: markerSize(feature.properties.mag)
+    }
+
+  }
+
+  // determining size of marker based on magnitude
+
+  function markerSize(magnitude) {
+    return magnitude * 2.5;
+  };
+
+// Determining Style based on Depth of earthquake:
+
+  function colorStyle(depth) {
+
+    if (depth > 70) {
+        return "red";
+    }
+    else if (depth > 50) {
+        return "orange";
+    }
+    else if (depth > 30) {
+        return "gold";
+    }
+    else if (depth > 10) {
+        return "yellow";
+    }
+
+  }
   // Create a GeoJSON layer that contains the features array on the earthquakeData object.
   // Run the onEachFeature function once for each piece of data in the array.
   let earthquakes = L.geoJSON(earthquakeData, {
-    onEachFeature: onEachFeature
+    onEachFeature: onEachFeature,
+    pointToLayer: pointToLayer,
+    style: getStyle
+
   });
+
+// let earthquakes = L.geoJSON(earthquakeData)
 
   // Send our earthquakes layer to the createMap function/
   createMap(earthquakes);
@@ -65,34 +110,4 @@ function createMap(earthquakes) {
   }).addTo(myMap);
 
 }
-
-for (let i = 0; i < queryUrl.length; i++) {
-
-    // Your data markers should reflect the
-    // magnitude of the earthquake by their
-    // size and the depth of the earthquake by color.
-    // Earthquakes with higher magnitudes
-    // should appear larger, and earthquakes
-    // with greater depth should appear
-    // darker in color.
-    // 4 +
-    // 2-4
-    //0-2
-
-    let color = "";
-    // if (queryUrl[i].mag > 4) {
-    //   color = "darkblue";
-    // }
-    // else if (countries[i].gdp_pc > 75000) {
-    //   color = "blue";
-    // }
-    // else if (countries[i].gdp_pc > 50000) {
-    //   color = "green";
-    // }
-    // else {
-    //   color = "violet";
-    console.log(features[i].properties.mag);
-    }
-
-console.log(features[i].properties.mag);
 
